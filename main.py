@@ -1,25 +1,26 @@
+import os
 import telebot
-from flask import Flask
-from threading import Thread
+from flask import Flask, request
 
 BOT_TOKEN = "8942389214:AAFnWpnn18cxWfv-gxZkFi23f9EDqNhHXMw"
 bot = telebot.TeleBot(BOT_TOKEN)
 
-# Render port muammosini hal qilish uchun Flask veb-server
-app = Flask('')
+app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Bot is running!"
+    return "UzTestProBot is running via Webhook!"
 
-def run():
-    app.run(host='0.0.0.0', port=10000)
+@app.route(f'/{BOT_TOKEN}', methods=['POST'])
+def webhook():
+    if request.headers.get('content-type') == 'application/json':
+        json_string = request.get_data().decode('utf-8')
+        update = telebot.types.Update.de_json(json_string)
+        bot.process_new_updates([update])
+        return "!", 200
+    else:
+        return "Invalid", 403
 
-def keep_alive():
-    t = Thread(target=run)
-    t.start()
-
-# /start buyrug'i
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
     markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -40,6 +41,9 @@ def send_welcome(message):
     )
 
 if __name__ == "__main__":
-    keep_alive()  # Veb-serverni ishga tushiradi
-    print("Bot muvaffaqiyatli ishga tushdi...")
-    bot.infinity_polling()
+    RENDER_URL = "https://uztestprobot.onrender.com"
+    bot.remove_webhook()
+    bot.set_webhook(url=f"{RENDER_URL}/{BOT_TOKEN}")
+    
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
