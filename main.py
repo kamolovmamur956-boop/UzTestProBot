@@ -92,4 +92,4 @@ def callback_query(call):
 
 if __name__ == "__main__":
     print("Bot muvaffaqiyatli ishga tushdi...")
-    bot.infinity_polling()
+   # bot.infinity_polling()
