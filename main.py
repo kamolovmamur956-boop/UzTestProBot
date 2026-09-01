@@ -356,3 +356,155 @@ def select_mandatory_subject(message):
     )
     markup.add(telebot.types.KeyboardButton("🔙 Asosiy menyu"))
     bot.send_message(message.chat.id, "Kerakli majburiy fanni tanlang:", reply_markup=markup)
+# 1. Majburiy fanlar menyusini ochish
+@bot.message_handler(func=lambda message: "Majburiy Fanlar" in message.text)
+def select_mandatory_subject(message):
+    markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.add(
+        telebot.types.KeyboardButton("Matematika"),
+        telebot.types.KeyboardButton("Tarix"),
+        telebot.types.KeyboardButton("Ona tili")
+    )
+    markup.add(telebot.types.KeyboardButton("Asosiy menyu"))
+    bot.send_message(message.chat.id, "Kerakli majburiy fanni tanlang:", reply_markup=markup)
+
+# 2. Matematika testi
+@bot.message_handler(func=lambda message: message.text == "Matematika")
+def start_math_test(message):
+    chat_id = message.chat.id
+    user_progress[chat_id] = {"index": 0, "score": 0, "subject": "math"}
+    send_math_question(chat_id)
+
+def send_math_question(chat_id):
+    data = user_progress.get(chat_id)
+    if not data or data.get("subject") != "math":
+        return
+    idx = data["index"]
+    if idx < len(MATH_TESTS):
+        q = MATH_TESTS[idx]
+        markup = telebot.types.InlineKeyboardMarkup()
+        for opt in q["options"]:
+            markup.add(telebot.types.InlineKeyboardButton(opt, callback_data=f"ans_{opt[0]}"))
+        bot.send_message(chat_id, q["question"], reply_markup=markup, parse_mode="Markdown")
+    else:
+        score = data["score"]
+        bot.send_message(chat_id, f"🏆 Matematika testi yakunlandi!\nSizning natijangiz: {score}/10")
+        user_progress.pop(chat_id, None)
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith("ans_"))
+def handle_math_answer(call):
+    chat_id = call.message.chat.id
+    data = user_progress.get(chat_id)
+    if not data or data.get("subject") != "math":
+        return
+    selected = call.data.split("_")[1]
+    idx = data["index"]
+    if MATH_TESTS[idx]["answer"] == selected:
+        data["score"] += 1
+    data["index"] += 1
+    bot.answer_callback_query(call.id, "Javob qabul qilindi!")
+    try:
+        bot.delete_message(chat_id, call.message.message_id)
+    except:
+        pass
+    send_math_question(chat_id)
+
+# 3. Tarix testi
+@bot.message_handler(func=lambda message: message.text == "Tarix")
+def start_history_test(message):
+    chat_id = message.chat.id
+    user_progress[chat_id] = {"index": 0, "score": 0, "subject": "history"}
+    send_history_question(chat_id)
+
+def send_history_question(chat_id):
+    data = user_progress.get(chat_id)
+    if not data or data.get("subject") != "history":
+        return
+    idx = data["index"]
+    if idx < len(HISTORY_TESTS):
+        q = HISTORY_TESTS[idx]
+        markup = telebot.types.InlineKeyboardMarkup()
+        for opt in q["options"]:
+            markup.add(telebot.types.InlineKeyboardButton(opt, callback_data=f"hist_{opt[0]}"))
+        bot.send_message(chat_id, q["question"], reply_markup=markup, parse_mode="Markdown")
+    else:
+        score = data["score"]
+        bot.send_message(chat_id, f"🏆 Tarix testi yakunlandi!\nSizning natijangiz: {score}/10")
+        user_progress.pop(chat_id, None)
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith("hist_"))
+def handle_history_answer(call):
+    chat_id = call.message.chat.id
+    data = user_progress.get(chat_id)
+    if not data or data.get("subject") != "history":
+        return
+    selected = call.data.split("_")[1]
+    idx = data["index"]
+    if HISTORY_TESTS[idx]["answer"] == selected:
+        data["score"] += 1
+    data["index"] += 1
+    bot.answer_callback_query(call.id, "Javob qabul qilindi!")
+    try:
+        bot.delete_message(chat_id, call.message.message_id)
+    except:
+        pass
+    send_history_question(chat_id)
+
+# 4. Ona tili testi
+@bot.message_handler(func=lambda message: message.text == "Ona tili")
+def start_uzbek_test(message):
+    chat_id = message.chat.id
+    user_progress[chat_id] = {"index": 0, "score": 0, "subject": "uzbek"}
+    send_uzbek_question(chat_id)
+
+def send_uzbek_question(chat_id):
+    data = user_progress.get(chat_id)
+    if not data or data.get("subject") != "uzbek":
+        return
+    idx = data["index"]
+    if idx < len(UZBEK_TESTS):
+        q = UZBEK_TESTS[idx]
+        markup = telebot.types.InlineKeyboardMarkup()
+        for opt in q["options"]:
+            markup.add(telebot.types.InlineKeyboardButton(opt, callback_data=f"uzb_{opt[0]}"))
+        bot.send_message(chat_id, q["question"], reply_markup=markup, parse_mode="Markdown")
+    else:
+        score = data["score"]
+        bot.send_message(chat_id, f"🏆 Ona tili testi yakunlandi!\nSizning natijangiz: {score}/10")
+        user_progress.pop(chat_id, None)
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith("uzb_"))
+def handle_uzbek_answer(call):
+    chat_id = call.message.chat.id
+    data = user_progress.get(chat_id)
+    if not data or data.get("subject") != "uzbek":
+        return
+    selected = call.data.split("_")[1]
+    idx = data["index"]
+    if UZBEK_TESTS[idx]["answer"] == selected:
+        data["score"] += 1
+    data["index"] += 1
+    bot.answer_callback_query(call.id, "Javob qabul qilindi!")
+    try:
+        bot.delete_message(chat_id, call.message.message_id)
+    except:
+        pass
+    send_uzbek_question(chat_id)
+
+# 5. Asosiy menyuga qaytish
+@bot.message_handler(func=lambda message: message.text == "Asosiy menyu")
+def back_to_main(message):
+    markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.add(
+        telebot.types.KeyboardButton("Milliy Sertifikat"),
+        telebot.types.KeyboardButton("Majburiy Fanlar")
+    )
+    markup.add(
+        telebot.types.KeyboardButton("Mavzulashtirilgan Testlar"),
+        telebot.types.KeyboardButton("Pedagogik Mahorat")
+    )
+    markup.add(
+        telebot.types.KeyboardButton("Balans va Obuna"),
+        telebot.types.KeyboardButton("Mening natijalarim")
+    )
+    bot.send_message(message.chat.id, "Asosiy menyu:", reply_markup=markup)
