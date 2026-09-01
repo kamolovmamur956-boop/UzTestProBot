@@ -346,3 +346,13 @@ def handle_uzbek_answer(call):
     except:
         pass
     send_uzbek_question(chat_id)
+    @bot.message_handler(func=lambda message: message.text == "🧩 Majburiy Fanlar")
+def select_mandatory_subject(message):
+    markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.add(
+        telebot.types.KeyboardButton("📐 Matematika"),
+        telebot.types.KeyboardButton("📜 Tarix"),
+        telebot.types.KeyboardButton("🇺🇿 Ona tili")
+    )
+    markup.add(telebot.types.KeyboardButton("🔙 Asosiy menyu"))
+    bot.send_message(message.chat.id, "Kerakli majburiy fanni tanlang:", reply_markup=markup)
