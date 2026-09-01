@@ -39,41 +39,7 @@ def send_welcome(message):
         f"Salom, {message.from_user.first_name}! 🚀 UzTestPro botiga xush kelibsiz. Tayyorgarlik yo'nalishini tanlang:",
         reply_markup=markup
     )
-    @bot.message_handler(func=lambda message: message.text in ["🧩 Majburiy Fanlar", "Majburiy Fanlar"])
-def select_mandatory_subject(message):
-    markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add(
-        telebot.types.KeyboardButton("Matematika"),
-        telebot.types.KeyboardButton("Tarix"),
-        telebot.types.KeyboardButton("Ona tili")
-    )
-    markup.add(telebot.types.KeyboardButton("Asosiy menyu"))
-    bot.send_message(message.chat.id, "Kerakli majburiy fanni tanlang:", reply_markup=markup)
-
-@bot.message_handler(func=lambda message: message.text in ["🔙 Asosiy menyu", "Asosiy menyu"])
-def back_to_main(message):
-    send_welcome(message)
-@bot.message_handler(func=lambda message: message.text in ["🔙 Asosiy menyu", "Asosiy menyu"])
-def back_to_main(message):
-    chat_id = message.chat.id
-    user_progress.pop(chat_id, None)  # Eski test xotirasini tozalaymiz
-    
-    markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
-    btn1 = telebot.types.KeyboardButton("🎯 Milliy Sertifikat")
-    btn2 = telebot.types.KeyboardButton("🧩 Majburiy Fanlar")
-    btn3 = telebot.types.KeyboardButton("🧩 Mavzulashtirilgan Testlar")
-    btn4 = telebot.types.KeyboardButton("🏆 Pedagogik Mahorat")
-    btn5 = telebot.types.KeyboardButton("💳 Balans va Obuna")
-    btn6 = telebot.types.KeyboardButton("📊 Mening natijalarim")
-    markup.add(btn1, btn2)
-    markup.add(btn3, btn4)
-    markup.add(btn5, btn6)
-    
-    bot.send_message(
-        chat_id,
-        "Asosiy menyu:",
-        reply_markup=markup
-    )
+   
 if __name__ == "__main__":
     RENDER_URL = "https://uztestprobot.onrender.com"
     bot.remove_webhook()
