@@ -39,6 +39,20 @@ def send_welcome(message):
         f"Salom, {message.from_user.first_name}! 🚀 UzTestPro botiga xush kelibsiz. Tayyorgarlik yo'nalishini tanlang:",
         reply_markup=markup
     )
+    @bot.message_handler(func=lambda message: message.text in ["🧩 Majburiy Fanlar", "Majburiy Fanlar"])
+def select_mandatory_subject(message):
+    markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.add(
+        telebot.types.KeyboardButton("Matematika"),
+        telebot.types.KeyboardButton("Tarix"),
+        telebot.types.KeyboardButton("Ona tili")
+    )
+    markup.add(telebot.types.KeyboardButton("Asosiy menyu"))
+    bot.send_message(message.chat.id, "Kerakli majburiy fanni tanlang:", reply_markup=markup)
+
+@bot.message_handler(func=lambda message: message.text in ["🔙 Asosiy menyu", "Asosiy menyu"])
+def back_to_main(message):
+    send_welcome(message)
 @bot.message_handler(func=lambda message: message.text in ["🔙 Asosiy menyu", "Asosiy menyu"])
 def back_to_main(message):
     chat_id = message.chat.id
