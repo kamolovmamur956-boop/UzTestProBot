@@ -352,7 +352,7 @@ def select_mandatory_subject(message):
     markup.add(
         telebot.types.KeyboardButton("📐 Matematika"),
         telebot.types.KeyboardButton("📜 Tarix"),
-        telebot.types.KeyboardButton("🇺🇿 Ona tili")
+       telebot.types.KeyboardButton("🇺🇿 Ona tili")
     )
     markup.add(telebot.types.KeyboardButton("🔙 Asosiy menyu"))
     bot.send_message(message.chat.id, "Kerakli majburiy fanni tanlang:", reply_markup=markup)
